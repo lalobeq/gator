@@ -14,7 +14,7 @@ RETURNING *;
 
 -- name: GetPostsForUser :many
 SELECT 
-  posts.id, posts.title, posts.description, posts.published_at,
+  posts.id, posts.title, posts.description, posts.published_at, posts.url,
   feeds.id AS feed_id
 FROM posts
 INNER JOIN feeds

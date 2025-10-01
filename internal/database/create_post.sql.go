@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -34,8 +33,8 @@ type CreatePostParams struct {
 	UpdatedAt   time.Time
 	Title       string
 	Url         string
-	Description sql.NullString
-	PublishedAt sql.NullTime
+	Description string
+	PublishedAt time.Time
 	FeedID      uuid.UUID
 }
 
@@ -66,7 +65,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 
 const getPostsForUser = `-- name: GetPostsForUser :many
 SELECT 
-  posts.id, posts.title, posts.description, posts.published_at,
+  posts.id, posts.title, posts.description, posts.published_at, posts.url,
   feeds.id AS feed_id
 FROM posts
 INNER JOIN feeds
@@ -86,8 +85,9 @@ type GetPostsForUserParams struct {
 type GetPostsForUserRow struct {
 	ID          uuid.UUID
 	Title       string
-	Description sql.NullString
-	PublishedAt sql.NullTime
+	Description string
+	PublishedAt time.Time
+	Url         string
 	FeedID      uuid.UUID
 }
 
@@ -105,6 +105,7 @@ func (q *Queries) GetPostsForUser(ctx context.Context, arg GetPostsForUserParams
 			&i.Title,
 			&i.Description,
 			&i.PublishedAt,
+			&i.Url,
 			&i.FeedID,
 		); err != nil {
 			return nil, err
